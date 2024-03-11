@@ -116,6 +116,12 @@ pushd openmm-cuda
 popd
 LIB_SDIR=".libs" repair
 
+rm -rf $PREFIX/lib/plugins
+rm -rf $PREFIX/lib/libOpenMM
+rm -rf $PREFIX/include/openmm
+rm -rf $PREFIX/include/lepton
+rm -rf $PREFIX/share/openmm
+
 # Copy the wheel to destination
 for whl in fixed_wheels/*.whl; do
   if [[ "$build_platform" == "osx-"* ]]; then
