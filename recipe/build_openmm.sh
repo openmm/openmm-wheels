@@ -109,7 +109,7 @@ pushd openmm-cuda
     whl_name=$(basename $whl)
     whl_name="${whl_name::${#whl_name}-7}$whl_tag"
     pushd $PREFIX
-        $BUILD_PREFIX/bin/python $RECIPE_DIR/vendor_wheel.py $whl lib/plugins/libOpenMMCUDA.so
+        $BUILD_PREFIX/bin/python $RECIPE_DIR/vendor_wheel.py $whl lib/plugins/libOpenMMCUDA.so lib/plugins/libOpenMMDrudeCUDA.so lib/plugins/libOpenMMAmoebaCUDA.so lib/plugins/libOpenMMRPMDCUDA.so
     popd
     cp $whl ../dist/$whl_name
   done
