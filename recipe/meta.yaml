@@ -17,6 +17,8 @@ package:
 source:
   git_url: https://github.com/openmm/{{ name }}.git
   git_rev: "ec797ac"
+  patches:
+    - 0001-wheels.patch
 
 build:
   number: {{ build }}
@@ -58,9 +60,17 @@ requirements:
     - m2-findutils  # [win]
     - m2-coreutils  # [win]
 {% endif %}
+    # START WHEEL CHANGES
+    - auditwheel      # [linux]
+    - setuptools      # [linux]
+    - unzip           # [unix]
+    - patchelf        # [linux]
+    - delocate
+    # END WHEEL CHANGES
 
   host:
     - python
+    - pip
     - swig
     - pthread-stubs
     - lxml

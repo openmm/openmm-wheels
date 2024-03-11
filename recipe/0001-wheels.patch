@@ -1,0 +1,73 @@
+From 20d1d14ed17e5e6e2badfe94b08bac53a59fc5eb Mon Sep 17 00:00:00 2001
+From: Isuru Fernando <isuruf@gmail.com>
+Date: Fri, 8 Mar 2024 08:56:04 -0600
+Subject: [PATCH] wheels
+
+---
+ wrappers/python/CMakeLists.txt       |  2 ++
+ wrappers/python/openmm-cuda/setup.py | 12 ++++++++++++
+ wrappers/python/setup.py             |  4 +++-
+ 3 files changed, 17 insertions(+), 1 deletion(-)
+ create mode 100644 wrappers/python/openmm-cuda/setup.py
+
+diff --git a/wrappers/python/CMakeLists.txt b/wrappers/python/CMakeLists.txt
+index 5e8355cad..16ed4d4a6 100644
+--- a/wrappers/python/CMakeLists.txt
++++ b/wrappers/python/CMakeLists.txt
+@@ -294,6 +294,8 @@ else()
+ endif()
+ configure_file(pysetup.cmake.in
+     "${CMAKE_CURRENT_BINARY_DIR}/pysetupinstall.cmake" @ONLY)
++configure_file(openmm-cuda/setup.py
++    "${OPENMM_PYTHON_STAGING_DIR}/openmm-cuda/setup.py" @ONLY)
+ add_custom_target(PythonInstall
+     COMMAND ${CMAKE_COMMAND}
+         -P "${CMAKE_CURRENT_BINARY_DIR}/pysetupinstall.cmake"
+diff --git a/wrappers/python/openmm-cuda/setup.py b/wrappers/python/openmm-cuda/setup.py
+new file mode 100644
+index 000000000..82d74ad7a
+--- /dev/null
++++ b/wrappers/python/openmm-cuda/setup.py
+@@ -0,0 +1,12 @@
++from setuptools import setup, find_packages
++
++cuda_ver = r"@CUDAToolkit_VERSION@"
++cuda_vers = cuda_ver.split(".")
++
++cuda_ver = cuda_vers[0] if int(cuda_vers[0]) > 11 else ".".join(cuda_vers[:2])
++
++setup(
++    name=f"openmm-cuda",
++    version=f"@OPENMM_VERSION@.{cuda_ver}",
++    packages=find_packages(),
++)
+diff --git a/wrappers/python/setup.py b/wrappers/python/setup.py
+index d2a147065..4cbac13a8 100644
+--- a/wrappers/python/setup.py
++++ b/wrappers/python/setup.py
+@@ -85,12 +85,13 @@ def writeVersionPy(filename="openmm/version.py", major_version_num=MAJOR_VERSION
+ 
+     cnt = """
+ # THIS FILE IS GENERATED FROM OPENMM SETUP.PY
++import os
+ short_version = '%(version)s'
+ version = '%(version)s'
+ full_version = '%(full_version)s'
+ git_revision = '%(git_revision)s'
+ release = %(isrelease)s
+-openmm_library_path = r'%(path)s'
++openmm_library_path = os.path.join(os.path.dirname(__file__), "..", "OpenMM.libs", "lib")
+ 
+ if not release:
+     version = full_version
+@@ -164,6 +165,7 @@ def buildKeywordDictionary(major_version_num=MAJOR_VERSION_NUM,
+     (through custom forces and integrators), openness, and high performance
+     (especially on recent GPUs) that make it truly unique among simulation codes.
+     """
++    setupKeywords["extras_require"]         = {"cuda12": f"openmm-cuda=={__version__}.12", "cuda11.2": f"openmm-cuda=={__version__}.11.2"}
+ 
+     define_macros = [('MAJOR_VERSION', major_version_num),
+                      ('MINOR_VERSION', minor_version_num)]
+-- 
+2.42.0
+

@@ -46,40 +46,88 @@ elif [[ "$target_platform" == osx* ]]; then
     #   /System/Library/Frameworks/OpenCL.framework/OpenCL
 fi
 
-# Set location for FFTW3 on both linux and mac
-CMAKE_FLAGS+=" -DFFTW_INCLUDES=${PREFIX}/include/"
-CMAKE_FLAGS+=" -DFFTW_LIBRARY=${PREFIX}/lib/libfftw3f${SHLIB_EXT}"
-CMAKE_FLAGS+=" -DFFTW_THREADS_LIBRARY=${PREFIX}/lib/libfftw3f_threads${SHLIB_EXT}"
 # Disambiguate swig location
 CMAKE_FLAGS+=" -DSWIG_EXECUTABLE=$(which swig)"
+
+if [[ "$target_platform" == linux-* ]]; then
+    export LDFLAGS="$LDFLAGS -static-libstdc++ -Wl,--exclude-libs,ALL -Wl,-rpath,$ORIGIN/../OpenMM.libs/lib"
+fi
 
 # Build in subdirectory and install.
 mkdir -p build
 cd build
 cmake ${CMAKE_FLAGS} ${SRC_DIR}
 make -j$CPU_COUNT
-make -j$CPU_COUNT install PythonInstall
+make install
 
-# Put examples into an appropriate subdirectory.
-mkdir -p ${PREFIX}/share/openmm/
-mv ${PREFIX}/examples ${PREFIX}/share/openmm/
+cd python
+rm -rf dist
+rm -rf fixed_wheels
+export OPENMM_LIB_PATH=$PREFIX/lib
+export OPENMM_INCLUDE_PATH=$PREFIX/include
+$PYTHON -m pip wheel . --wheel-dir=dist
 
-# Fix some overlinking warnings/errors
-for lib in ${PREFIX}/lib/plugins/*${SHLIB_EXT}; do
-    ln -s $lib ${PREFIX}/lib/$(basename $lib) || true
+# vendor include directories and libraries
+for whl in $PWD/dist/*.whl; do
+  pushd $PREFIX
+    plugins=""
+    for plugin in lib/plugins/*.so; do
+      if [[ "$plugin" != *CUDA.so ]]; then
+        plugins="$plugins $plugin"
+      fi
+    done
+    $BUILD_PREFIX/bin/python $RECIPE_DIR/vendor_wheel.py $whl include/openmm include/lepton lib/libOpenMM.so lib/libOpenMM.so.8.1 lib/libOpenMMRPMD.so lib/libOpenMMAmoeba.so lib/libOpenMMDrude.so $plugins
+  popd
 done
 
-if [[ "$with_test_suite" == "true" ]]; then
-    mkdir -p ${PREFIX}/share/openmm/tests/
-    # BSD find vs GNU find: -executable is only available in GNU find
-    # +0111 is somehow equivalent in BSD, but that's not compatible in GNU
-    # so we use different commands for each...
-    if [[ "$target_platform" == osx* ]]; then
-        find . -name "Test*" -perm +0111 -type f \
-            -exec python $RECIPE_DIR/patch_osx_tests.py "{}" \; \
-            -exec cp "{}" $PREFIX/share/openmm/tests/ \;
-    else
-        find . -name "Test*" -executable -type f -exec cp "{}" $PREFIX/share/openmm/tests/ \;
-    fi
-    cp -r python/tests $PREFIX/share/openmm/tests/python
-fi
+function repair() {
+  # Repair the wheels in dist
+  if [[ "$target_platform" == linux-64 ]]; then
+    rm -rf $PREFIX/lib/libstdc++.*
+    rm -rf $PREFIX/lib/libgcc*
+    auditwheel repair dist/*.whl -w $PWD/fixed_wheels --plat manylinux2014_x86_64 --exclude libOpenMM.so.8.1 --exclude libOpenMMOpenCL.so --exclude libOpenMMDrude.so --exclude libOpenMMAmoeba.so --exclude libOpenMMRPMD.so --exclude libOpenCL.so.1 --exclude libcuda.so.1 --exclude libcufft.so.11 --exclude libnvrtc.so.12 --exclude libcufft.so.10 --exclude libnvrtc.so.11.2 --lib-sdir=$LIB_SDIR
+  elif [[ "$target_platform" == linux-* ]]; then
+    rm -rf $PREFIX/lib/libstdc++.*
+    rm -rf $PREFIX/lib/libgcc*
+    auditwheel repair dist/*.whl -w $PWD/fixed_wheels --plat manylinux2014_$ARCH
+  else
+    python -m pip install "https://github.com/isuruf/delocate/archive/sanitize_rpaths2.tar.gz#egg=delocate"
+    python $(which delocate-wheel) -w fixed_wheels --sanitize-rpaths -v dist/*.whl
+  fi
+}
+
+LIB_SDIR=".libs/lib" repair
+rm -rf dist
+mkdir dist
+for whl in fixed_wheels/*.whl; do
+  whl_tag="${whl##*-}"
+done
+
+pushd openmm-cuda
+  $PYTHON -m pip wheel .
+  for whl in $PWD/*.whl; do
+    whl_name=$(basename $whl)
+    whl_name="${whl_name::${#whl_name}-7}$whl_tag"
+    pushd $PREFIX
+        $BUILD_PREFIX/bin/python $RECIPE_DIR/vendor_wheel.py $whl lib/plugins/libOpenMMCUDA.so
+    popd
+    cp $whl ../dist/$whl_name
+  done
+popd
+LIB_SDIR=".libs" repair
+
+# Copy the wheel to destination
+for whl in fixed_wheels/*.whl; do
+  if [[ "$build_platform" == "osx-"* ]]; then
+    WHL_DEST=$RECIPE_DIR/../build_artifacts/pypi_wheels
+  elif [[ "$build_platform" == "linux-"* ]]; then
+    WHL_DEST=/home/conda/feedstock_root/build_artifacts/pypi_wheels
+  fi
+  mkdir -p $WHL_DEST
+  cp $whl $WHL_DEST
+done
+
+# Install the wheel
+for whl in fixed_wheels/*.whl; do
+  $PYTHON -m pip install $whl
+done
