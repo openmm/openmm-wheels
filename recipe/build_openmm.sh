@@ -85,7 +85,7 @@ function repair() {
   if [[ "$target_platform" == linux-64 ]]; then
     rm -rf $PREFIX/lib/libstdc++.*
     rm -rf $PREFIX/lib/libgcc*
-    auditwheel repair dist/*.whl -w $PWD/fixed_wheels --plat manylinux2014_x86_64 --exclude libOpenMM.so.8.1 --exclude libOpenMMOpenCL.so --exclude libOpenMMDrude.so --exclude libOpenMMAmoeba.so --exclude libOpenMMRPMD.so --exclude libOpenCL.so.1 --exclude libcuda.so.1 --exclude libcufft.so.11 --exclude libnvrtc.so.12 --exclude libcufft.so.10 --exclude libnvrtc.so.11.2 --lib-sdir=$LIB_SDIR
+    auditwheel repair dist/*.whl -w $PWD/fixed_wheels --plat manylinux2014_x86_64 --exclude libOpenMM.so.8.1 --exclude libOpenMMCUDA.so --exclude libOpenMMOpenCL.so --exclude libOpenMMDrude.so --exclude libOpenMMAmoeba.so --exclude libOpenMMRPMD.so --exclude libOpenCL.so.1 --exclude libcuda.so.1 --exclude libcufft.so.11 --exclude libnvrtc.so.12 --exclude libcufft.so.10 --exclude libnvrtc.so.11.2 --lib-sdir=$LIB_SDIR
   elif [[ "$target_platform" == linux-* ]]; then
     rm -rf $PREFIX/lib/libstdc++.*
     rm -rf $PREFIX/lib/libgcc*
