@@ -3,6 +3,7 @@ azure:
   store_build_artifacts: true
 build_platform:
   linux_aarch64: linux_64
+  linux_ppc64le: linux_64
   osx_arm64: osx_64
 conda_build:
   pkg_format: '2'
@@ -13,6 +14,12 @@ github:
 os_version:
   linux_64: cos7
 provider:
-  linux_aarch64: default
-  linux_ppc64le: azure
+  linux_64: github_actions
+  osx_64: github_actions
+  win_64: github_actions
 test_on_native_only: true
+skip_render:
+  - README.md
+  - LICENSE.txt
+  - .github/workflows/automerge.yml
+  - .github/workflows/webservices.yml

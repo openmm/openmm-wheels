@@ -17,6 +17,8 @@ package:
 source:
   git_url: https://github.com/openmm/{{ name }}.git
   git_rev: "ec797ac"
+  patches:
+    - 0001-wheels.patch
 
 build:
   number: {{ build }}
@@ -24,6 +26,7 @@ build:
   track_features:  # make Apple OpenCL low priority
     - openmm_opencl_apple  # [osx and (opencl_impl == 'apple')]
   skip: true  # [(cuda_compiler_version in (undefined, 'None') and (linux64 or win)) or ((cuda_compiler_version != '10.2') and (ppc64le))]
+  skip: true # [not linux64]
   script_env:
     - CONFIG
     - CUDA_HOME  # [ppc64le]
@@ -58,9 +61,17 @@ requirements:
     - m2-findutils  # [win]
     - m2-coreutils  # [win]
 {% endif %}
+    # START WHEEL CHANGES
+    - auditwheel      # [linux]
+    - setuptools      # [linux]
+    - unzip           # [unix]
+    - patchelf        # [linux]
+    - delocate
+    # END WHEEL CHANGES
 
   host:
     - python
+    - pip
     - swig
     - pthread-stubs
     - lxml
