@@ -67,31 +67,50 @@ export OPENMM_LIB_PATH=$PREFIX/lib
 export OPENMM_INCLUDE_PATH=$PREFIX/include
 $PYTHON -m pip wheel . --wheel-dir=dist
 
+if [[ "$target_platform" == "osx-"* ]]; then
+  LIBNAME=libOpenMM.8.1.dylib
+else
+  LIBNAME=libOpenMM.so.8.1
+fi
+
 # vendor include directories and libraries
 for whl in $PWD/dist/*.whl; do
   pushd $PREFIX
     plugins=""
-    for plugin in lib/plugins/*.so; do
+    for plugin in lib/plugins/*${SHLIB_EXT}; do
       if [[ "$plugin" != *CUDA.so ]]; then
         plugins="$plugins $plugin"
       fi
     done
-    $BUILD_PREFIX/bin/python $RECIPE_DIR/vendor_wheel.py $whl include/openmm include/lepton lib/libOpenMM.so lib/libOpenMM.so.8.1 lib/libOpenMMRPMD.so lib/libOpenMMAmoeba.so lib/libOpenMMDrude.so $plugins
+    $BUILD_PREFIX/bin/python $RECIPE_DIR/vendor_wheel.py $whl include/openmm include/lepton lib/libOpenMM${SHLIB_EXT} ${LIBNAME} lib/libOpenMMRPMD${SHLIB_EXT} lib/libOpenMMAmoeba${SHLIB_EXT} lib/libOpenMMDrude${SHLIB_EXT} $plugins
   popd
 done
 
+if [[ "$ARCH" == "64" ]]; then
+  ARCH=x86_64
+fi
+
 function repair() {
   # Repair the wheels in dist
-  if [[ "$target_platform" == linux-64 ]]; then
+  if [[ "$target_platform" == "linux-"* ]]; then
     rm -rf $PREFIX/lib/libstdc++.*
     rm -rf $PREFIX/lib/libgcc*
-    auditwheel repair dist/*.whl -w $PWD/fixed_wheels --plat manylinux2014_x86_64 --exclude libOpenMM.so.8.1 --exclude libOpenMMCUDA.so --exclude libOpenMMOpenCL.so --exclude libOpenMMDrude.so --exclude libOpenMMAmoeba.so --exclude libOpenMMRPMD.so --exclude libOpenCL.so.1 --exclude libcuda.so.1 --exclude libcufft.so.11 --exclude libnvrtc.so.12 --exclude libcufft.so.10 --exclude libnvrtc.so.11.2 --lib-sdir=$LIB_SDIR
-  elif [[ "$target_platform" == linux-* ]]; then
-    rm -rf $PREFIX/lib/libstdc++.*
-    rm -rf $PREFIX/lib/libgcc*
-    auditwheel repair dist/*.whl -w $PWD/fixed_wheels --plat manylinux2014_$ARCH
+    auditwheel repair dist/*.whl \
+      -w $PWD/fixed_wheels \
+      --plat manylinux2014_${ARCH} \
+      --exclude ${LIBNAME} \
+      --exclude libOpenMMCUDA.so \
+      --exclude libOpenMMOpenCL.so \
+      --exclude libOpenMMDrude.so \
+      --exclude libOpenMMAmoeba.so \
+      --exclude libOpenMMRPMD.so \
+      --exclude libOpenCL.so.1 \
+      --exclude libcuda.so.1 \
+      --exclude libcufft.so.11 \
+      --exclude libcufft.so.10 \
+      --exclude libnvrtc.so.${cuda_compiler_version} \
+      --lib-sdir=$LIB_SDIR
   else
-    python -m pip install "https://github.com/isuruf/delocate/archive/sanitize_rpaths2.tar.gz#egg=delocate"
     python $(which delocate-wheel) -w fixed_wheels --sanitize-rpaths -v dist/*.whl
   fi
 }
@@ -103,18 +122,26 @@ for whl in fixed_wheels/*.whl; do
   whl_tag="${whl##*-}"
 done
 
-pushd openmm-cuda
-  $PYTHON -m pip wheel .
-  for whl in $PWD/*.whl; do
-    whl_name=$(basename $whl)
-    whl_name="${whl_name::${#whl_name}-7}$whl_tag"
-    pushd $PREFIX
-        $BUILD_PREFIX/bin/python $RECIPE_DIR/vendor_wheel.py $whl lib/plugins/libOpenMMCUDA.so lib/plugins/libOpenMMDrudeCUDA.so lib/plugins/libOpenMMAmoebaCUDA.so lib/plugins/libOpenMMRPMDCUDA.so
-    popd
-    cp $whl ../dist/$whl_name
-  done
-popd
-LIB_SDIR=".libs" repair
+if [[ "$cuda_compiler_version" != "None" ]]; then
+  pushd openmm-cuda
+    $PYTHON -m pip wheel .
+    for whl in $PWD/*.whl; do
+      whl_name=$(basename $whl)
+      whl_name="${whl_name::${#whl_name}-7}$whl_tag"
+      pushd $PREFIX
+        $BUILD_PREFIX/bin/python \
+          $RECIPE_DIR/vendor_wheel.py \
+          $whl \
+          lib/plugins/libOpenMMCUDA.so \
+          lib/plugins/libOpenMMDrudeCUDA.so \
+          lib/plugins/libOpenMMAmoebaCUDA.so \
+          lib/plugins/libOpenMMRPMDCUDA.so
+      popd
+      cp $whl ../dist/$whl_name
+    done
+  popd
+  LIB_SDIR=".libs" repair
+fi
 
 rm -rf $PREFIX/lib/plugins
 rm -rf $PREFIX/lib/libOpenMM
