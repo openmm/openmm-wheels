@@ -36,12 +36,12 @@ if errorlevel 1 exit 1
 dir
 dir dist
 
-cd %LIBRARY_PREFIX%
 for %%f in (dist\*.whl) do (
   echo "fixing %%f"
+  cd %LIBRARY_PREFIX%
   %PYTHON% ^
       %RECIPE_DIR%\vendor_wheel.py ^
-      %%f ^
+      %SRC_DIR%\build\python\%%f ^
       include\openmm ^
       include\lepton ^
       lib\OpenMM.dll ^
@@ -57,6 +57,7 @@ for %%f in (dist\*.whl) do (
       lib\plugins\OpenMMAmoebaReference.dll ^
       lib\plugins\OpenMMDrudeReference.dll
   if errorlevel 1 exit 1
+  cd %SRC_DIR%\build\python
   delvewheel repair ^
     -w %cd%\fixed_wheels ^
     --lib-sdir=.libs\lib ^
@@ -64,7 +65,6 @@ for %%f in (dist\*.whl) do (
     --no-dll OpenCL.dll
   if errorlevel 1 exit 1
 )
-cd %SRC_DIR%\build\python
 
 for %%f in (fixed_wheels\*.whl) do (
   copy %%f %RECIPE_DIR%\..\build_artifacts\pypi_wheels\
