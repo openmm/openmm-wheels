@@ -125,7 +125,7 @@ function repair() {
       -w fixed_wheels \
       --sanitize-rpaths \
       -v \
-      dist/*.whl
+      dist/*.whl \
       --exclude ${LIBNAME} \
       --exclude libOpenMMCUDA.dylib \
       --exclude libOpenMMOpenCL.dylib \
