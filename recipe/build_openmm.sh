@@ -123,7 +123,7 @@ function repair() {
       --exclude libnvrtc.so.${cuda_compiler_version} \
       --lib-sdir=$LIB_SDIR
   else
-    $BUILD_PREFIX/bin/python -m pip install "git+https://github.com/isuruf/delocate@delete_rpath"
+    python -m pip install "git+https://github.com/isuruf/delocate@delete_rpath"
     python $(which delocate-wheel) \
       -w fixed_wheels \
       --sanitize-rpaths \

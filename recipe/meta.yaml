@@ -63,13 +63,8 @@ requirements:
     - m2-coreutils  # [win]
 {% endif %}
     # START WHEEL CHANGES
-    - auditwheel      # [linux]
-    - setuptools      # [linux]
     - unzip           # [unix]
     - patchelf        # [linux]
-    - delocate >=0.10.6
-    - pip
-    - macholib
     # END WHEEL CHANGES
 
   host:
@@ -92,6 +87,13 @@ requirements:
     # No cuda-driver-dev in windows
     - cuda-driver-dev  # [linux]
     {% endif %}
+    # START WHEEL CHANGES
+    - auditwheel      # [linux]
+    - setuptools      # [linux]
+    - delocate >=0.10.6
+    - pip
+    - macholib
+    # END WHEEL CHANGES
   run:
     - python
     - numpy
