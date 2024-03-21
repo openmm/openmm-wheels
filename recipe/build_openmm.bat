@@ -34,6 +34,13 @@ set "OPENMM_INCLUDE_PATH=%LIBRARY_INC%"
 
 cd %LIBRARY_PREFIX%
 for %%f in (dist\*.whl) do (
+  set "plugins=lib\plugins\OpenMMCPU.dll"
+  for %%p in (lib\plugins\*Reference.dll) do (
+    set "plugins=%plugins% %%p"
+  )
+  for %%p in (lib\plugins\*OpenCL.dll) do (
+    set "plugins=%plugins% %%p"
+  )
   %PYTHON% ^
       %RECIPE_DIR%\vendor_wheel.py ^
       %%f ^
@@ -44,13 +51,6 @@ for %%f in (dist\*.whl) do (
       lib\OpenMMAmoeba.dll ^
       lib\OpenMMDrude.dll ^
       %plugins%
-  set "plugins=lib\plugins\OpenMMCPU.dll"
-  for %%plugin in (lib\plugins\*Reference.dll) do (
-    set "plugins=%plugins% %%plugin"
-  )
-  for %%plugin in (lib\plugins\*OpenCL.dll) do (
-    set "plugins=%plugins% %%plugin"
-  )
   if errorlevel 1 exit 1
   delvewheel repair ^
     -w %cd%\fixed_wheels ^
