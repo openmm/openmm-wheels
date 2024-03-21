@@ -120,7 +120,8 @@ function repair() {
       --exclude libcuda.so.1 \
       --exclude libcufft.so.11 \
       --exclude libcufft.so.10 \
-      --exclude libnvrtc.so.${cuda_compiler_version} \
+      --exclude libnvrtc.so.11.2 \
+      --exclude libnvrtc.so.12 \
       --lib-sdir=$LIB_SDIR
   else
     python -m pip install "git+https://github.com/isuruf/delocate@delete_rpath"
