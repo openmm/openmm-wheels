@@ -30,8 +30,11 @@ rmdir /s /q dist
 rmdir /s /q fixed_wheels
 set "OPENMM_LIB_PATH=%LIBRARY_LIB%"
 set "OPENMM_INCLUDE_PATH=%LIBRARY_INC%"
-%PYTHON% -m pip wheel . "--wheel-dir=dist"
+%PYTHON% -m pip wheel . --wheel-dir=dist
 if errorlevel 1 exit 1
+
+dir
+dir dist
 
 cd %LIBRARY_PREFIX%
 for %%f in (dist\*.whl) do (
