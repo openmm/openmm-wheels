@@ -51,6 +51,8 @@ CMAKE_FLAGS+=" -DSWIG_EXECUTABLE=$(which swig)"
 
 if [[ "$target_platform" == linux-* ]]; then
     export LDFLAGS="$LDFLAGS -static-libstdc++ -Wl,--exclude-libs,ALL -Wl,-rpath,$ORIGIN/../OpenMM.libs/lib"
+elif [[ "$target_platform" == osx-* ]]; then
+    export LDFLAGS="$LDFLAGS -Wl,-rpath,@loader_path/../OpenMM.libs/lib -Wl,-rpath,@loader_path"
 fi
 
 # Build in subdirectory and install.
