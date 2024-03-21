@@ -68,6 +68,7 @@ requirements:
     - unzip           # [unix]
     - patchelf        # [linux]
     - delocate >=0.10.6
+    - pip
     # END WHEEL CHANGES
 
   host:
