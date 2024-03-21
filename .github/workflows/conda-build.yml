@@ -137,6 +137,10 @@ jobs:
         STAGING_BINSTAR_TOKEN: ${{ secrets.STAGING_BINSTAR_TOKEN }}
       if: matrix.os == 'windows'
 
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: matrix.os == 'windows'
+
     - name: Upload artifacts to Github
       uses: actions/upload-artifact@v2
       with:
