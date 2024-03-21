@@ -82,7 +82,17 @@ for whl in $PWD/dist/*.whl; do
         plugins="$plugins $plugin"
       fi
     done
-    $BUILD_PREFIX/bin/python $RECIPE_DIR/vendor_wheel.py $whl include/openmm include/lepton lib/libOpenMM${SHLIB_EXT} ${LIBNAME} lib/libOpenMMRPMD${SHLIB_EXT} lib/libOpenMMAmoeba${SHLIB_EXT} lib/libOpenMMDrude${SHLIB_EXT} $plugins
+    $BUILD_PREFIX/bin/python \
+      $RECIPE_DIR/vendor_wheel.py \
+      $whl \
+      include/openmm \
+      include/lepton \
+      lib/libOpenMM${SHLIB_EXT} \
+      ${LIBNAME} \
+      lib/libOpenMMRPMD${SHLIB_EXT} \
+      lib/libOpenMMAmoeba${SHLIB_EXT} \
+      lib/libOpenMMDrude${SHLIB_EXT} \
+      $plugins
   popd
 done
 
@@ -111,7 +121,17 @@ function repair() {
       --exclude libnvrtc.so.${cuda_compiler_version} \
       --lib-sdir=$LIB_SDIR
   else
-    python $(which delocate-wheel) -w fixed_wheels --sanitize-rpaths -v dist/*.whl
+    python $(which delocate-wheel) \
+      -w fixed_wheels \
+      --sanitize-rpaths \
+      -v \
+      dist/*.whl
+      --exclude ${LIBNAME} \
+      --exclude libOpenMMCUDA.dylib \
+      --exclude libOpenMMOpenCL.dylib \
+      --exclude libOpenMMDrude.dylib \
+      --exclude libOpenMMAmoeba.dylib \
+      --exclude libOpenMMRPMD.dylib
   fi
 }
 
