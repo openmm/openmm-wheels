@@ -55,6 +55,7 @@ for %%f in (dist\*.whl) do (
   delvewheel repair ^
     -w %cd%\fixed_wheels ^
     --lib-sdir=.libs\lib ^
+    ----ignore-in-wheel ^
     --no-dll OpenCL.dll
 )
 cd %SRC_DIR%\build\python
