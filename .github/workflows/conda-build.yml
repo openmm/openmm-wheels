@@ -139,7 +139,7 @@ jobs:
 
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
-      if: matrix.os == 'windows'
+      if: failure() && matrix.os == 'windows'
 
     - name: Upload artifacts to Github
       uses: actions/upload-artifact@v2

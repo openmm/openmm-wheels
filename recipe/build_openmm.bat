@@ -38,13 +38,7 @@ dir dist
 
 cd %LIBRARY_PREFIX%
 for %%f in (dist\*.whl) do (
-  set "plugins=lib\plugins\OpenMMCPU.dll"
-  for %%p in (lib\plugins\*Reference.dll) do (
-    set "plugins=%plugins% %%p"
-  )
-  for %%p in (lib\plugins\*OpenCL.dll) do (
-    set "plugins=%plugins% %%p"
-  )
+  echo "fixing %%f"
   %PYTHON% ^
       %RECIPE_DIR%\vendor_wheel.py ^
       %%f ^
@@ -68,6 +62,7 @@ for %%f in (dist\*.whl) do (
     --lib-sdir=.libs\lib ^
     ----ignore-in-wheel ^
     --no-dll OpenCL.dll
+  if errorlevel 1 exit 1
 )
 cd %SRC_DIR%\build\python
 
