@@ -88,7 +88,7 @@ for whl in $PWD/dist/*.whl; do
       include/openmm \
       include/lepton \
       lib/libOpenMM${SHLIB_EXT} \
-      ${LIBNAME} \
+      lib/${LIBNAME} \
       lib/libOpenMMRPMD${SHLIB_EXT} \
       lib/libOpenMMAmoeba${SHLIB_EXT} \
       lib/libOpenMMDrude${SHLIB_EXT} \
