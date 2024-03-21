@@ -24,11 +24,11 @@ jobs:
           - CONFIG: osx_64_numpy1.23python3.11.____cpython
             UPLOAD_PACKAGES: True
             os: macos
-            runs_on: ('macos-latest',)
+            runs_on: ['macos-latest']
           - CONFIG: osx_arm64_numpy1.23python3.11.____cpython
             UPLOAD_PACKAGES: True
             os: macos
-            runs_on: ('macos-latest',)
+            runs_on: ['macos-latest']
     steps:
 
     - name: Checkout code
