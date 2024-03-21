@@ -69,6 +69,7 @@ requirements:
     - patchelf        # [linux]
     - delocate >=0.10.6
     - pip
+    - macholib
     # END WHEEL CHANGES
 
   host:
