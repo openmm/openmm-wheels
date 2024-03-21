@@ -91,6 +91,7 @@ requirements:
     - auditwheel      # [linux]
     - setuptools      # [linux]
     - delocate >=0.10.6
+    - delvewheel      # [win]
     - pip
     - macholib
     # END WHEEL CHANGES

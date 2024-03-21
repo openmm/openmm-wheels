@@ -84,7 +84,7 @@ for whl in $PWD/dist/*.whl; do
         plugins="$plugins $plugin"
       fi
     done
-    $BUILD_PREFIX/bin/python \
+    $PREFIX/bin/python \
       $RECIPE_DIR/vendor_wheel.py \
       $whl \
       include/openmm \
@@ -152,7 +152,7 @@ if [[ "$cuda_compiler_version" != "None" ]]; then
       whl_name=$(basename $whl)
       whl_name="${whl_name::${#whl_name}-7}$whl_tag"
       pushd $PREFIX
-        $BUILD_PREFIX/bin/python \
+        $PREFIX/bin/python \
           $RECIPE_DIR/vendor_wheel.py \
           $whl \
           lib/plugins/libOpenMMCUDA.so \

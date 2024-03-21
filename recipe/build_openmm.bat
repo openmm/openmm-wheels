@@ -1,4 +1,5 @@
 @echo on
+setlocal EnableDelayedExpansion
 
 mkdir build
 cd build
@@ -23,19 +24,46 @@ cmake.exe .. -G "NMake Makefiles JOM" ^
 
 jom -j %NUMBER_OF_PROCESSORS% || goto :error
 jom -j %NUMBER_OF_PROCESSORS% install || goto :error
-jom -j %NUMBER_OF_PROCESSORS% PythonInstall || goto :error
 
-:: Better location for examples
-mkdir %LIBRARY_PREFIX%\share\openmm || goto :error
-move %LIBRARY_PREFIX%\examples %LIBRARY_PREFIX%\share\openmm || goto :error
+cd python
+rm -rf dist
+rm -rf fixed_wheels
+set "OPENMM_LIB_PATH=%LIBRARY_LIB%"
+set "OPENMM_INCLUDE_PATH=%LIBRARY_INC%"
+%PYTHON% -m pip wheel . "--wheel-dir=dist"
 
-if "%with_test_suite%"=="true" (
-    mkdir %LIBRARY_PREFIX%\share\openmm\tests\ || goto :error
-    find . -name "Test*" -type f -exec cp "{}" %LIBRARY_PREFIX%\share\openmm\tests\ ; || goto :error
-    robocopy /E python\tests\ %LIBRARY_PREFIX%\share\openmm\tests\python
-    if %errorlevel% GTR 1 ( exit /b %errorlevel% )
+cd %LIBRARY_PREFIX%
+for %%f in (dist\*.whl) do (
+  %PYTHON% ^
+      %RECIPE_DIR%\vendor_wheel.py ^
+      %%f ^
+      include\openmm ^
+      include\lepton ^
+      lib\OpenMM.dll ^
+      lib\OpenMMRPMD.dll ^
+      lib\OpenMMAmoeba.dll ^
+      lib\OpenMMDrude.dll ^
+      %plugins%
+  set "plugins=lib\plugins\OpenMMCPU.dll"
+  for %%plugin in (lib\plugins\*Reference.dll) do (
+    set "plugins=%plugins% %%plugin"
+  )
+  for %%plugin in (lib\plugins\*OpenCL.dll) do (
+    set "plugins=%plugins% %%plugin"
+  )
+  if errorlevel 1 exit 1
+  delvewheel repair ^
+    -w %cd%\fixed_wheels ^
+    --lib-sdir=.libs\lib ^
+    --no-dll OpenCL.dll
 )
+cd %SRC_DIR%\build\python
 
+for %%f in (fixed_wheels\*.whl) do (
+  copy %%f %RECIPE_DIR%\..\build_artifacts\pypi_wheels\
+  if errorlevel 1 exit 1
+  %PYTHON% -m pip install %%f
+)
 
 goto :EOF
 
