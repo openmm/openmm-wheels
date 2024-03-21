@@ -26,11 +26,12 @@ jom -j %NUMBER_OF_PROCESSORS% || goto :error
 jom -j %NUMBER_OF_PROCESSORS% install || goto :error
 
 cd python
-rm -rf dist
-rm -rf fixed_wheels
+rmdir /s /q dist
+rmdir /s /q fixed_wheels
 set "OPENMM_LIB_PATH=%LIBRARY_LIB%"
 set "OPENMM_INCLUDE_PATH=%LIBRARY_INC%"
 %PYTHON% -m pip wheel . "--wheel-dir=dist"
+if errorlevel 1 exit 1
 
 cd %LIBRARY_PREFIX%
 for %%f in (dist\*.whl) do (
@@ -50,7 +51,14 @@ for %%f in (dist\*.whl) do (
       lib\OpenMMRPMD.dll ^
       lib\OpenMMAmoeba.dll ^
       lib\OpenMMDrude.dll ^
-      %plugins%
+      lib\plugins\OpenMMOpenCL.dll ^
+      lib\plugins\OpenMMRPMDOpenCL.dll ^
+      lib\plugins\OpenMMAmoebaOpenCL.dll ^
+      lib\plugins\OpenMMDrudeOpenCL.dll ^
+      lib\plugins\OpenMMCPU.dll ^
+      lib\plugins\OpenMMRPMDReference.dll ^
+      lib\plugins\OpenMMAmoebaReference.dll ^
+      lib\plugins\OpenMMDrudeReference.dll
   if errorlevel 1 exit 1
   delvewheel repair ^
     -w %cd%\fixed_wheels ^
