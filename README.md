@@ -19,12 +19,12 @@ second wheel contains all the CUDA plugins.
 
 When uploaded to PyPI, these wheels can be installed with
 
-  pip install openmm[cuda12]
+    pip install openmm[cuda12]
 
 or
 
-  pip install openmm[cuda112]
+    pip install openmm[cuda112]
 
 To install without the CUDA plugins,
 
-  pip install openmm
+    pip install openmm
