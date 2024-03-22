@@ -30,7 +30,7 @@ rmdir /s /q dist
 rmdir /s /q fixed_wheels
 set "OPENMM_LIB_PATH=%LIBRARY_LIB%"
 set "OPENMM_INCLUDE_PATH=%LIBRARY_INC%"
-%PYTHON% -m pip wheel . --wheel-dir=dist
+%PYTHON% -m pip wheel . --wheel-dir=dist -vv
 if errorlevel 1 exit 1
 
 mkdir -p fixed_wheels
@@ -64,7 +64,7 @@ for %%f in (dist\*.whl) do (
 )
 
 cd openmm-cuda
-%PYTHON% -m pip wheel . --wheel-dir=%SRC_DIR%\build\python\dist
+%PYTHON% -m pip wheel . --wheel-dir=%SRC_DIR%\build\python\dist -vv
 cd ..
 
 for %%f in (dist\*.whl) do (
