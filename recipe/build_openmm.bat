@@ -58,12 +58,6 @@ for %%f in (dist\*.whl) do (
       lib\plugins\OpenMMDrudeReference.dll
   if errorlevel 1 exit 1
   cd %SRC_DIR%\build\python
-  delvewheel repair ^
-    -w %cd%\fixed_wheels ^
-    --lib-sdir=.libs ^
-    ----ignore-in-wheel ^
-    --no-dll OpenCL.dll
-  if errorlevel 1 exit 1
 )
 
 for %%f in (fixed_wheels\*.whl) do (
