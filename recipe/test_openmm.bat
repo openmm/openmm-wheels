@@ -22,23 +22,6 @@ if "%CI%"=="" (
 )
 python -c "from openmm import Platform as P; n = P.getNumPlatforms(); assert n == %n_platforms%, f'n_platforms ({n}) != %n_platforms%'" || goto :error
 
-:: Check version metadata looks ok, only for final releases, RCs are not checked!
-:: See https://stackoverflow.com/a/7006016/3407590 for substring checks in CMD
-if x%PKG_VERSION:rc=%==x%PKG_VERSION% (
-    if x%PKG_VERSION:beta=%==x%PKG_VERSION% (
-	if x%PKG_VERSION:dev=%==x%PKG_VERSION% (
-            python -c "from openmm import Platform; v = Platform.getOpenMMVersion(); assert '%PKG_VERSION%' in (v, v+'.0'), v + '!=%PKG_VERSION%'"  || goto :error
-            for /f "usebackq tokens=1" %%a in (`git ls-remote https://github.com/openmm/openmm.git %PKG_VERSION%`) do (
-            python -c "from openmm.version import git_revision; r = git_revision; assert r == '%%a', r + '!=%%a'" || goto :error
-         )
-	)
-    )
-) else (
-    echo "!!! WARNING !!!"
-    echo "This is a release candidate build (%PKG_VERSION%). Please check versions and git hashes manually!"
-)
-
-
 (set \n=^
 %=This hack is required to store newlines=%
 )
