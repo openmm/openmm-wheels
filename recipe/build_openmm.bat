@@ -33,6 +33,7 @@ set "OPENMM_INCLUDE_PATH=%LIBRARY_INC%"
 %PYTHON% -m pip wheel . --wheel-dir=dist
 if errorlevel 1 exit 1
 
+mkdir -p fixed_wheels
 dir
 dir dist
 
@@ -58,6 +59,28 @@ for %%f in (dist\*.whl) do (
       lib\plugins\OpenMMDrudeReference.dll
   if errorlevel 1 exit 1
   cd %SRC_DIR%\build\python
+  move %%f fixed_wheels\
+  if errorlevel 1 exit 1
+)
+
+cd openmm-cuda
+%PYTHON% -m pip wheel . --wheel-dir=%SRC_DIR%\build\python\dist
+cd ..
+
+for %%f in (dist\*.whl) do (
+  echo "fixing %%f"
+  cd %LIBRARY_PREFIX%
+  %PYTHON% ^
+      %RECIPE_DIR%\vendor_wheel.py ^
+      %SRC_DIR%\build\python\%%f ^
+      lib\plugins\OpenMMCUDA.dll ^
+      lib\plugins\OpenMMRPMD\CUDA.dll ^
+      lib\plugins\OpenMMAmoebaCUDA.dll ^
+      lib\plugins\OpenMMDrudeCUDA.dll ^
+  if errorlevel 1 exit 1
+  cd %SRC_DIR%\build\python
+  move %%f fixed_wheels\
+  if errorlevel 1 exit 1
 )
 
 for %%f in (fixed_wheels\*.whl) do (
@@ -65,6 +88,12 @@ for %%f in (fixed_wheels\*.whl) do (
   if errorlevel 1 exit 1
   %PYTHON% -m pip install %%f
 )
+
+rmdir /s /q %LIBRARY_LIB%\plugins
+rmdir /s /q %LIBRARY_INC%\openmm
+rmdir /s /q %LIBRARY_INC%\lepton
+rmdir /s /q %LIBRARY_PREFIX%\examples
+del /q /f %LIBRARY_LIB%\OpenMM*
 
 goto :EOF
 
