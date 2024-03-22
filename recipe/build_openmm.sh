@@ -168,7 +168,7 @@ if [[ "$cuda_compiler_version" != "None" ]]; then
 fi
 
 rm -rf $PREFIX/lib/plugins
-rm -rf $PREFIX/lib/libOpenMM
+rm -rf $PREFIX/lib/libOpenMM*
 rm -rf $PREFIX/include/openmm
 rm -rf $PREFIX/include/lepton
 rm -rf $PREFIX/share/openmm
