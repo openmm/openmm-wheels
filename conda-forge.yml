@@ -17,6 +17,8 @@ provider:
   linux_64: github_actions
   osx_64: github_actions
   win_64: github_actions
+github_actions:
+  free_disk_space: true
 test_on_native_only: true
 skip_render:
   - README.md

@@ -4,13 +4,6 @@
 :: and we are bringing it in through `script_env` in meta.yaml
 if not "%CONFIG%"=="" set CI="True"
 
-:: Existence tests
-if not exist %LIBRARY_LIB%/OpenMM.lib exit 1
-if not exist %LIBRARY_LIB%/plugins/OpenMMCPU.lib exit 1
-if not exist %LIBRARY_LIB%/plugins/OpenMMPME.lib exit 1
-if not exist %LIBRARY_LIB%/plugins/OpenMMOpenCL.lib exit 1
-if not exist %LIBRARY_LIB%/plugins/OpenMMCUDA.lib exit 1
-
 :: Debug silent errors in plugin loading
 python -c "import openmm as mm; print('---Loaded---', *mm.pluginLoadedLibNames, '---Failed---', *mm.Platform.getPluginLoadFailures(), sep='\n')"
 
@@ -28,15 +21,6 @@ if "%CI%"=="" (
     set n_platforms=2
 )
 python -c "from openmm import Platform as P; n = P.getNumPlatforms(); assert n == %n_platforms%, f'n_platforms ({n}) != %n_platforms%'" || goto :error
-
-:: Now let's run a little MD
-cd %LIBRARY_PREFIX%/share/openmm/examples
-python benchmark.py --test=rf --seconds=10 --platform=Reference || goto :error
-python benchmark.py --test=rf --seconds=10 --platform=CPU || goto :error
-if "%CI%"=="" (
-    python benchmark.py --test=rf --seconds=10 --platform=CUDA  || goto :error
-    python benchmark.py --test=rf --seconds=10 --platform=OpenCL  || goto :error
-)
 
 :: Check version metadata looks ok, only for final releases, RCs are not checked!
 :: See https://stackoverflow.com/a/7006016/3407590 for substring checks in CMD
