@@ -124,7 +124,7 @@ function repair() {
       --exclude libnvrtc.so.12 \
       --lib-sdir=$LIB_SDIR
   else
-    python -m pip install "git+https://github.com/isuruf/delocate@delete_rpath"
+    python -m pip install "git+https://github.com/matthew-brett/delocate"
     python $(which delocate-wheel) \
       -w fixed_wheels \
       --sanitize-rpaths \

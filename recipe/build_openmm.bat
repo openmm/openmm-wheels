@@ -74,14 +74,16 @@ for %%f in (dist\*.whl) do (
       %RECIPE_DIR%\vendor_wheel.py ^
       %SRC_DIR%\build\python\%%f ^
       lib\plugins\OpenMMCUDA.dll ^
-      lib\plugins\OpenMMRPMD\CUDA.dll ^
+      lib\plugins\OpenMMRPMDCUDA.dll ^
       lib\plugins\OpenMMAmoebaCUDA.dll ^
-      lib\plugins\OpenMMDrudeCUDA.dll ^
+      lib\plugins\OpenMMDrudeCUDA.dll
   if errorlevel 1 exit 1
   cd %SRC_DIR%\build\python
   move %%f fixed_wheels\
   if errorlevel 1 exit 1
 )
+
+mkdir %RECIPE_DIR%\..\build_artifacts\pypi_wheels\
 
 for %%f in (fixed_wheels\*.whl) do (
   copy %%f %RECIPE_DIR%\..\build_artifacts\pypi_wheels\
