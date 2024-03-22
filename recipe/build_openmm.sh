@@ -5,9 +5,9 @@ set -ex
 
 CMAKE_FLAGS="${CMAKE_ARGS} -DCMAKE_INSTALL_PREFIX=${PREFIX} -DCMAKE_BUILD_TYPE=Release"
 if [[ "$with_test_suite" == "true" ]]; then
-    CMAKE_FLAGS+=" -DBUILD_TESTING=ON -DOPENMM_BUILD_OPENCL_TESTS=ON"
+    CMAKE_FLAGS+=" -DBUILD_TESTING=ON -DOPENMM_BUILD_OPENCL_TESTS=ON -DOPENMM_BUILD_CUDA_TESTS=ON"
 else
-    CMAKE_FLAGS+=" -DBUILD_TESTING=OFF"
+    CMAKE_FLAGS+=" -DBUILD_TESTING=OFF -DOPENMM_BUILD_CUDA_TESTS=OFF"
 fi
 
 
@@ -124,8 +124,8 @@ function repair() {
       --exclude libnvrtc.so.12 \
       --lib-sdir=$LIB_SDIR
   else
-    python -m pip install "git+https://github.com/matthew-brett/delocate"
-    python $(which delocate-wheel) \
+    $PYTHON -m pip install "git+https://github.com/matthew-brett/delocate"
+    $PYTHON $(which delocate-wheel) \
       -w fixed_wheels \
       --sanitize-rpaths \
       -v \
