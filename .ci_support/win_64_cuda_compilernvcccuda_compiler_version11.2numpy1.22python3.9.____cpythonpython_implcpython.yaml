@@ -1,0 +1,32 @@
+c_compiler:
+- vs2019
+c_stdlib:
+- vs
+channel_sources:
+- conda-forge
+channel_targets:
+- openmm main
+cuda_compiler:
+- nvcc
+cuda_compiler_version:
+- '11.2'
+cxx_compiler:
+- vs2019
+numpy:
+- '1.22'
+pin_run_as_build:
+  python:
+    min_pin: x.x
+    max_pin: x.x
+python:
+- 3.9.* *_cpython
+python_impl:
+- cpython
+target_platform:
+- win-64
+zip_keys:
+- - cuda_compiler
+  - cuda_compiler_version
+- - python
+  - numpy
+  - python_impl
