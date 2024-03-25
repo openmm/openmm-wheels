@@ -12,6 +12,6 @@
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: build_artifacts/pypi_wheels/*.whl
         tag: ${{ github.ref }}
-        overwrite: true
+        overwrite: false
         file_glob: true
       if: startsWith(github.ref, 'refs/tags/')
