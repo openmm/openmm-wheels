@@ -52,6 +52,8 @@ CMAKE_FLAGS+=" -DSWIG_EXECUTABLE=$(which swig)"
 if [[ "$target_platform" == linux-* ]]; then
     export LDFLAGS="$LDFLAGS -static-libstdc++ -Wl,--exclude-libs,ALL -Wl,-rpath,$ORIGIN/../OpenMM.libs/lib"
     export CXXFLAGS="$CXXFLAGS -D_GLIBCXX_USE_CXX11_ABI=0"
+    # need this for distutils which uses the C compiler and CFLAGS
+    export CFLAGS="$CFLAGS -D_GLIBCXX_USE_CXX11_ABI=0"
 elif [[ "$target_platform" == osx-* ]]; then
     export LDFLAGS="$LDFLAGS -Wl,-rpath,@loader_path/../OpenMM.libs/lib -Wl,-rpath,@loader_path/."
 fi
