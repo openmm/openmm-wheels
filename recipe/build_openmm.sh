@@ -2,7 +2,11 @@
 
 set -ex
 
-use_conda_compilers=0
+if [[ "$target_platform" == "linux-"* ]]; then
+  use_conda_compilers=0
+else
+  use_conda_compilers=1
+fi
 
 CMAKE_FLAGS="${CMAKE_ARGS} -DCMAKE_INSTALL_PREFIX=${PREFIX} -DCMAKE_BUILD_TYPE=Release"
 if [[ "$with_test_suite" == "true" ]]; then
