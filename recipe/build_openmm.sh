@@ -2,12 +2,23 @@
 
 set -ex
 
+use_conda_compilers=0
 
 CMAKE_FLAGS="${CMAKE_ARGS} -DCMAKE_INSTALL_PREFIX=${PREFIX} -DCMAKE_BUILD_TYPE=Release"
 if [[ "$with_test_suite" == "true" ]]; then
     CMAKE_FLAGS+=" -DBUILD_TESTING=ON -DOPENMM_BUILD_OPENCL_TESTS=ON -DOPENMM_BUILD_CUDA_TESTS=ON"
 else
     CMAKE_FLAGS+=" -DBUILD_TESTING=OFF -DOPENMM_BUILD_CUDA_TESTS=OFF"
+fi
+
+if [[ "$use_conda_compilers" == "0" ]]; then
+    /usr/bin/sudo -n yum install -y centos-release-scl
+    /usr/bin/sudo -n yum install -y devtoolset-11-gcc "devtoolset-11-gcc-c++"
+    source /opt/rh/devtoolset-11/enable
+    LIBGCC_DIR=$(dirname $(gcc -print-libgcc-file-name))
+    export LDFLAGS="-L$LIBGCC_DIR $LDFLAGS"
+    export CC="$(which gcc) -L$LIBGCC_DIR"
+    export CXX="$(which g++) -L$LIBGCC_DIR"
 fi
 
 
@@ -49,11 +60,12 @@ fi
 # Disambiguate swig location
 CMAKE_FLAGS+=" -DSWIG_EXECUTABLE=$(which swig)"
 
+if [[ "$use_conda_compilers" == "1" && "$target_platform" == linux-* ]]; then
+    export LDFLAGS="$LDFLAGS -static-libstdc++"
+fi
+
 if [[ "$target_platform" == linux-* ]]; then
-    export LDFLAGS="$LDFLAGS -static-libstdc++ -Wl,--exclude-libs,ALL -Wl,-rpath,$ORIGIN/../OpenMM.libs/lib"
-    export CXXFLAGS="$CXXFLAGS -D_GLIBCXX_USE_CXX11_ABI=0"
-    # need this for distutils which uses the C compiler and CFLAGS
-    export CFLAGS="$CFLAGS -D_GLIBCXX_USE_CXX11_ABI=0"
+    export LDFLAGS="$LDFLAGS -Wl,--exclude-libs,ALL -Wl,-rpath,$ORIGIN/../OpenMM.libs/lib"
 elif [[ "$target_platform" == osx-* ]]; then
     export LDFLAGS="$LDFLAGS -Wl,-rpath,@loader_path/../OpenMM.libs/lib -Wl,-rpath,@loader_path/."
 fi
