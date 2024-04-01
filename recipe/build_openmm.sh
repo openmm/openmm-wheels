@@ -17,8 +17,8 @@ fi
 
 if [[ "$use_conda_compilers" == "0" ]]; then
     /usr/bin/sudo -n yum install -y centos-release-scl
-    /usr/bin/sudo -n yum install -y devtoolset-11-gcc "devtoolset-11-gcc-c++"
-    source /opt/rh/devtoolset-11/enable
+    /usr/bin/sudo -n yum install -y devtoolset-10-gcc "devtoolset-10-gcc-c++"
+    source /opt/rh/devtoolset-10/enable
     LIBGCC_DIR=$(dirname $(gcc -print-libgcc-file-name))
     export LDFLAGS="-L$LIBGCC_DIR $LDFLAGS"
     export CC="$(which gcc) -L$LIBGCC_DIR"
