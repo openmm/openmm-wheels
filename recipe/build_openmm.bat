@@ -65,25 +65,26 @@ for %%f in (dist\*.whl) do (
 
 cd openmm-cuda
 %PYTHON% -m pip wheel . --wheel-dir=%SRC_DIR%\build\python\dist -vv
-cd ..
+cd %SRC_DIR%\build\python\dist
 
-for %%f in (dist\*.whl) do (
+for %%f in (*.whl) do (
   echo "fixing %%f"
   cd %LIBRARY_PREFIX%
   %PYTHON% ^
       %RECIPE_DIR%\vendor_wheel.py ^
-      %SRC_DIR%\build\python\%%f ^
+      %SRC_DIR%\build\python\dist\%%f ^
       lib\plugins\OpenMMCUDA.dll ^
       lib\plugins\OpenMMRPMDCUDA.dll ^
       lib\plugins\OpenMMAmoebaCUDA.dll ^
       lib\plugins\OpenMMDrudeCUDA.dll
   if errorlevel 1 exit 1
-  cd %SRC_DIR%\build\python
+  cd %SRC_DIR%\build\python\dist
   set "fname=%%f"
-  move %fname% fixed_wheels\%fname:~0,-7%win_amd64.whl
+  move %fname% ..\fixed_wheels\%fname:~0,-7%win_amd64.whl
   if errorlevel 1 exit 1
 )
 
+cd %SRC_DIR%\build\python
 mkdir %RECIPE_DIR%\..\build_artifacts\pypi_wheels\
 
 for %%f in (fixed_wheels\*.whl) do (
