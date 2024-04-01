@@ -79,7 +79,8 @@ for %%f in (dist\*.whl) do (
       lib\plugins\OpenMMDrudeCUDA.dll
   if errorlevel 1 exit 1
   cd %SRC_DIR%\build\python
-  move %%f fixed_wheels\
+  set "fname=%%f"
+  move %fname% fixed_wheels\%fname:~0,-7%win_amd64.whl
   if errorlevel 1 exit 1
 )
 
