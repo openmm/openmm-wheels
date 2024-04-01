@@ -23,7 +23,11 @@ When uploaded to PyPI, these wheels can be installed with
 
 or
 
-    pip install openmm[cuda112]
+    pip install openmm[cuda11.2]
+
+or
+
+    pip install openmm[cuda11.8]
 
 To install without the CUDA plugins,
 
