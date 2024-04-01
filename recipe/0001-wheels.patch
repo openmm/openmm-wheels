@@ -64,7 +64,7 @@ index d2a147065..4cbac13a8 100644
      (through custom forces and integrators), openness, and high performance
      (especially on recent GPUs) that make it truly unique among simulation codes.
      """
-+    setupKeywords["extras_require"]         = {"cuda12": f"openmm-cuda=={__version__}.12", "cuda11.2": f"openmm-cuda=={__version__}.11.2", "cuda11.8": f"openmm-cuda=={__version__}.11.8"}
++    setupKeywords["extras_require"]         = {"cuda12": f"openmm-cuda=={setupKeywords["version"]}.12", "cuda11.2": f"openmm-cuda=={setupKeywords["version"]}.11.2", "cuda11.8": f"openmm-cuda=={setupKeywords["version"]}.11.8"}
  
      define_macros = [('MAJOR_VERSION', major_version_num),
                       ('MINOR_VERSION', minor_version_num)]
