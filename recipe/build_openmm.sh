@@ -18,17 +18,11 @@ fi
 if [[ "$use_conda_compilers" == "0" ]]; then
     /usr/bin/sudo -n yum install -y centos-release-scl
     /usr/bin/sudo -n yum install -y devtoolset-11-gcc "devtoolset-11-gcc-c++"
-    #source /opt/rh/devtoolset-11/enable
-    LIBGCC_DIR_OLD=$(dirname $(/opt/rh/devtoolset-11/root/usr/bin/gcc -print-libgcc-file-name))
-    LIBGCC_DIR=$(dirname $($CC -print-libgcc-file-name))
-    cp ${LIBGCC_DIR_OLD}/libstdc++* ${LIBGCC_DIR}
+    source /opt/rh/devtoolset-11/enable
+    LIBGCC_DIR=$(dirname $(gcc -print-libgcc-file-name))
     export LDFLAGS="-L$LIBGCC_DIR $LDFLAGS"
-    export CXXFLAGS="$CXXFLAGS -D_GLIBCXX_USE_CXX11_ABI=0"
-
-    # Workaround distutils issues
-    export CC="$CC -L$LIBGCC_DIR"
-    export CXX="$CC -L$LIBGCC_DIR"
-    export CFLAGS="$CFLAGS -D_GLIBCXX_USE_CXX11_ABI=0"
+    export CC="$(which gcc) -L$LIBGCC_DIR"
+    export CXX="$(which g++) -L$LIBGCC_DIR"
 fi
 
 
