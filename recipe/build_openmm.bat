@@ -80,6 +80,8 @@ for %%f in (*.whl) do (
   if errorlevel 1 exit 1
   cd %SRC_DIR%\build\python\dist
   set "fname=%%f"
+  dir
+  echo %fname% ..\fixed_wheels\%fname:~0,-7%win_amd64.whl
   move %fname% ..\fixed_wheels\%fname:~0,-7%win_amd64.whl
   if errorlevel 1 exit 1
 )

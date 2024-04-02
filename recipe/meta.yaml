@@ -25,7 +25,7 @@ build:
   string: "py{{ PY_VER.replace('.', '') }}h{{ PKG_HASH }}_{{ build }}_{{ opencl_impl }}"  # [osx]
   track_features:  # make Apple OpenCL low priority
     - openmm_opencl_apple  # [osx and (opencl_impl == 'apple')]
-  skip: true  # [aarch64]
+  skip: true  # [aarch64 or not win]
   skip: true  # [(cuda_compiler_version in (undefined, 'None') and (linux or win)) or ppc64le or (win and python_impl == 'pypy')]
   script_env:
     - CONFIG
