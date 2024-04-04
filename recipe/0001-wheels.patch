@@ -28,7 +28,7 @@ new file mode 100644
 index 000000000..82d74ad7a
 --- /dev/null
 +++ b/wrappers/python/openmm-cuda/setup.py
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,13 @@
 +from setuptools import setup, find_packages
 +
 +cuda_ver = r"@CUDAToolkit_VERSION@"
@@ -40,6 +40,7 @@ index 000000000..82d74ad7a
 +    name=f"openmm-cuda",
 +    version=f"@OPENMM_VERSION@.{cuda_ver}",
 +    packages=find_packages(),
++    install_requires=["openmm==@OPENMM_VERSION@"],
 +)
 diff --git a/wrappers/python/setup.py b/wrappers/python/setup.py
 index d2a147065..4cbac13a8 100644
