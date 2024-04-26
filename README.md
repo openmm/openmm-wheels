@@ -11,8 +11,8 @@ Use `./rerender.sh` to rerender this feedstock
 
 There are two wheels for each platform. Eg: for linux
 
-- OpenMM-8.1.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-- openmm_cuda-8.1.1.12-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+- `OpenMM-8.1.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl`
+- `openmm_cuda-8.1.1.12-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl`
 
 The first wheel contains all files except the CUDA plugins and the
 second wheel contains all the CUDA plugins.
