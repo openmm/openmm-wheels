@@ -26,7 +26,10 @@ def main():
     args = list(sys.argv)
     args.pop(0)
     dist_path = args.pop(0)
-    add_library(args, dist_path)
+    lib_paths = []
+    for arg in args:
+        lib_paths.extend(glob(arg))
+    add_library(lib_paths, dist_path)
 
 if __name__ == '__main__':
     main()

@@ -45,6 +45,8 @@ for %%f in (dist\*.whl) do (
       %SRC_DIR%\build\python\%%f ^
       include\openmm ^
       include\lepton ^
+      include\OpenMM* ^
+      include\AmoebaOpenMM* ^
       lib\OpenMM.dll ^
       lib\OpenMMRPMD.dll ^
       lib\OpenMMAmoeba.dll ^

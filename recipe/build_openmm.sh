@@ -107,6 +107,8 @@ for whl in $PWD/dist/*.whl; do
       $RECIPE_DIR/vendor_wheel.py \
       $whl \
       include/openmm \
+      include/OpenMM* \
+      include/AmoebaOpenMM* \
       include/lepton \
       lib/libOpenMM${SHLIB_EXT} \
       lib/${LIBNAME} \
