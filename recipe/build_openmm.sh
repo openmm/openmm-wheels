@@ -103,7 +103,7 @@ for whl in $PWD/dist/*.whl; do
         plugins="$plugins $plugin"
       fi
     done
-    $BUILD_PREFIX/bin/python${PY_VER} $(which delocate-wheel) \
+    $BUILD_PREFIX/bin/python $(which delocate-wheel) \
       $RECIPE_DIR/vendor_wheel.py \
       $whl \
       include/openmm \
@@ -145,7 +145,7 @@ function repair() {
       --exclude libnvrtc.so.12 \
       --lib-sdir=$LIB_SDIR
   else
-    $BUILD_PREFIX/bin/python${PY_VER} $(which delocate-wheel) \
+    $BUILD_PREFIX/bin/python $(which delocate-wheel) \
       -w fixed_wheels \
       --sanitize-rpaths \
       -v \
@@ -173,7 +173,7 @@ if [[ "$cuda_compiler_version" != "None" ]]; then
       whl_name=$(basename $whl)
       whl_name="${whl_name::${#whl_name}-7}$whl_tag"
       pushd $PREFIX
-        $PREFIX/bin/python \
+        $BUILD_PREFIX/bin/python \
           $RECIPE_DIR/vendor_wheel.py \
           $whl \
           lib/plugins/libOpenMMCUDA.so \
