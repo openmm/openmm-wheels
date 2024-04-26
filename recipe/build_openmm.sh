@@ -103,7 +103,7 @@ for whl in $PWD/dist/*.whl; do
         plugins="$plugins $plugin"
       fi
     done
-    $PREFIX/bin/python \
+    $BUILD_PREFIX/bin/python${PY_VER} $(which delocate-wheel) \
       $RECIPE_DIR/vendor_wheel.py \
       $whl \
       include/openmm \
@@ -145,7 +145,7 @@ function repair() {
       --exclude libnvrtc.so.12 \
       --lib-sdir=$LIB_SDIR
   else
-    $PYTHON $(which delocate-wheel) \
+    $BUILD_PREFIX/bin/python${PY_VER} $(which delocate-wheel) \
       -w fixed_wheels \
       --sanitize-rpaths \
       -v \

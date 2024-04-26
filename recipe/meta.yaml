@@ -64,6 +64,10 @@ requirements:
     # START WHEEL CHANGES
     - unzip           # [unix]
     - patchelf        # [linux]
+    - auditwheel      # [linux]
+    - setuptools      # [linux]
+    - delocate >=0.10.6
+    - pip
     # END WHEEL CHANGES
 
   host:
@@ -86,13 +90,6 @@ requirements:
     # No cuda-driver-dev in windows
     - cuda-driver-dev  # [linux]
     {% endif %}
-    # START WHEEL CHANGES
-    - auditwheel      # [linux]
-    - setuptools      # [linux]
-    - delocate >=0.10.6
-    - pip
-    - macholib
-    # END WHEEL CHANGES
   run:
     - python
     - numpy

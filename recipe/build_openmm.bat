@@ -40,7 +40,7 @@ dir dist
 for %%f in (dist\*.whl) do (
   echo "fixing %%f"
   cd %LIBRARY_PREFIX%
-  %PYTHON% ^
+  %BUILD_PREFIX%\python.exe ^
       %RECIPE_DIR%\vendor_wheel.py ^
       %SRC_DIR%\build\python\%%f ^
       include\openmm ^
@@ -72,7 +72,7 @@ cd %SRC_DIR%\build\python
 for %%f in (dist\*.whl) do (
   echo "fixing %%f"
   cd %LIBRARY_PREFIX%
-  %PYTHON% ^
+  %BUILD_PREFIX%\python.exe ^
       %RECIPE_DIR%\vendor_wheel.py ^
       %SRC_DIR%\build\python\%%f ^
       lib\plugins\OpenMMCUDA.dll ^
