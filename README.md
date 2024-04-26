@@ -36,18 +36,21 @@ To install without the CUDA plugins,
 ### Release process
 
 1. Change `version` and `git_rev` in `recipe/meta.yaml`.
-2. Run `./rerender.sh`.
-3. Make a PR and merge once CI passes.
-4. Make a release in this github repo and wait for CI to upload wheels.
-5. Download the wheels using `./download_wheels.sh <name-of-tag>`.
-6. Optionally test the wheels.
-7. Upload the wheels using `twine upload dist`.
+2. Update for new python/cuda versions. See next section.
+3. Run `./rerender.sh`.
+4. Make a PR and merge once CI passes.
+5. Make a release in this github repo and wait for CI to upload wheels. eg: `v8.1.1-0`.
+6. Download the wheels using `./download_wheels.sh v8.1.1-0`.
+7. Optionally test the wheels.
+8. Upload the wheels using `twine upload dist`.
 
-#### Building for new python versions and cuda versions
+### Building for new python versions and cuda versions
 
 1. Copy the migration file for python/cuda from [conda-forge/openmm-feedstock](https://github.com/conda-forge/openmm-feedstock)
    For eg: [python 3.12 migration](https://github.com/conda-forge/openmm-feedstock/blob/ce7e3376d2dfb1033460093daf8e324f8169d486/.ci_support/migrations/python312.yaml)
 2. Run `./rerender.sh`.
+3. Make a new release in the github repo. eg: `v8.1.1-1`.
+4. Follow steps 6, 7, 8 as above.
 
 ### Building downstream libraries as wheels
 
