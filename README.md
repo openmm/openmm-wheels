@@ -54,7 +54,7 @@ To install without the CUDA plugins,
 
 ### Building downstream libraries as wheels
 
-To get downstream pacakges as wheels, we need to do the following,
+To get downstream packages as wheels, we need to do the following,
 
 1. Get a `conda-forge` feedstock up and running.
 2. Copy the feedstock into a new repo for wheel changes
