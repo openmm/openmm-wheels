@@ -103,7 +103,7 @@ for whl in $PWD/dist/*.whl; do
         plugins="$plugins $plugin"
       fi
     done
-    $BUILD_PREFIX/bin/python $(which delocate-wheel) \
+    $BUILD_PREFIX/bin/python \
       $RECIPE_DIR/vendor_wheel.py \
       $whl \
       include/openmm \
