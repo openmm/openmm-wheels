@@ -88,12 +88,6 @@ export OPENMM_LIB_PATH=$PREFIX/lib
 export OPENMM_INCLUDE_PATH=$PREFIX/include
 $PYTHON -m pip wheel . --wheel-dir=dist
 
-if [[ "$target_platform" == "osx-"* ]]; then
-  LIBNAME=libOpenMM.8.1.dylib
-else
-  LIBNAME=libOpenMM.so.8.1
-fi
-
 # vendor include directories and libraries
 for whl in $PWD/dist/*.whl; do
   pushd $PREFIX
@@ -111,7 +105,6 @@ for whl in $PWD/dist/*.whl; do
       include/AmoebaOpenMM* \
       include/lepton \
       lib/libOpenMM${SHLIB_EXT} \
-      lib/${LIBNAME} \
       lib/libOpenMMRPMD${SHLIB_EXT} \
       lib/libOpenMMAmoeba${SHLIB_EXT} \
       lib/libOpenMMDrude${SHLIB_EXT} \
@@ -131,7 +124,7 @@ function repair() {
     auditwheel repair dist/*.whl \
       -w $PWD/fixed_wheels \
       --plat manylinux2014_${ARCH} \
-      --exclude ${LIBNAME} \
+      --exclude libOpenMM.so \
       --exclude libOpenMMCUDA.so \
       --exclude libOpenMMOpenCL.so \
       --exclude libOpenMMDrude.so \
@@ -150,7 +143,7 @@ function repair() {
       --sanitize-rpaths \
       -v \
       dist/*.whl \
-      --exclude ${LIBNAME} \
+      --exclude libOpenMM.dylib \
       --exclude libOpenMMCUDA.dylib \
       --exclude libOpenMMOpenCL.dylib \
       --exclude libOpenMMDrude.dylib \
