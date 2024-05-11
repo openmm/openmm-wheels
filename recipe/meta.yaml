@@ -20,6 +20,7 @@ source:
   patches:
     - 0001-wheels.patch
     - gh4498.patch
+    - gh4537.patch
 
 build:
   number: {{ build }}
