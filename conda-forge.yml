@@ -19,7 +19,7 @@ provider:
   win_64: github_actions
 github_actions:
   free_disk_space: true
-test_on_native_only: true
+test: native_and_emulated
 skip_render:
   - README.md
   - LICENSE.txt
