@@ -16,7 +16,9 @@ else
 fi
 
 if [[ "$use_conda_compilers" == "0" ]]; then
-    /usr/bin/sudo -n yum install -y centos-release-scl
+    # Installing just centos-release-scl would use https://mirror.centos.org which is deprecated now.
+    # Install a repo that has https://vault.centos.org in it.
+    /usr/bin/sudo -n yum install -y https://github.com/isuruf/isuruf.github.io/releases/download/v1.0/centos-release-scl-7-9.2009.noarch.rpm
     /usr/bin/sudo -n yum install -y devtoolset-10-gcc "devtoolset-10-gcc-c++"
     source /opt/rh/devtoolset-10/enable
     LIBGCC_DIR=$(dirname $(gcc -print-libgcc-file-name))

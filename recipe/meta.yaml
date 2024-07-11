@@ -20,6 +20,7 @@ source:
   patches:
     - 0001-wheels.patch
     - gh4498.patch
+      #- gh4537.patch
 
 build:
   number: {{ build }}
@@ -47,11 +48,11 @@ requirements:
     - numpy                                  # [build_platform != target_platform]
     - swig                                   # [build_platform != target_platform]
     - {{ compiler('c') }}
+    - {{ stdlib('c') }}
     - {{ compiler('cxx') }}
     - {{ compiler('cuda') }}  # [(linux or win) and cuda_compiler != "None"]
     - cuda-version {{ cuda_compiler_version }}  # [(cuda_compiler_version or "None") != "None"]
     - {{ cdt('mesa-libgl-devel') }}  # [linux]
-    - sysroot_linux-64 2.17  # [linux64]
     - cmake
     - make  # [unix]
     - jom  # [win]
@@ -65,7 +66,7 @@ requirements:
     # START WHEEL CHANGES
     - unzip           # [unix]
     - patchelf        # [linux]
-    - auditwheel      # [linux]
+    - auditwheel <6   # [linux]
     - setuptools      # [linux]
     - delocate >=0.10.6
     - pip
